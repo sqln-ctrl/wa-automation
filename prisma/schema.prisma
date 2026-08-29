@@ -1,0 +1,184 @@
+// Prisma schema for a single-business WhatsApp Automation System
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------- Core entities ----------
+
+model Customer {
+  id          String   @id @default(cuid())
+  waId        String   @unique // WhatsApp wa_id / phone number (E.164, no +)
+  name        String?
+  profileName String? // Name reported by WhatsApp profile
+  email       String?
+  notes       String?
+  tags        String[] @default([])
+  isBlocked   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  conversations Conversation[]
+  appointments  Appointment[]
+
+  @@index([waId])
+}
+
+enum ConversationStatus {
+  BOT
+  HUMAN
+  CLOSED
+}
+
+model Conversation {
+  id         String             @id @default(cuid())
+  customerId String
+  customer   Customer           @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  status     ConversationStatus @default(BOT)
+  lastMessageAt DateTime        @default(now())
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  messages Message[]
+
+  @@index([customerId])
+  @@index([status])
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
+  RECEIVED
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  DOCUMENT
+  AUDIO
+  VIDEO
+  LOCATION
+  INTERACTIVE_BUTTON
+  INTERACTIVE_LIST
+  TEMPLATE
+  STICKER
+  UNKNOWN
+}
+
+model Message {
+  id             String            @id @default(cuid())
+  conversationId String
+  conversation   Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  whatsappMsgId  String?           @unique
+  direction      MessageDirection
+  type           MessageType       @default(TEXT)
+  content        String            @db.Text
+  rawPayload     Json?
+  status         MessageStatus     @default(SENT)
+  isFromBot      Boolean           @default(false)
+  isFromAi       Boolean           @default(false)
+  createdAt      DateTime          @default(now())
+
+  @@index([conversationId])
+  @@index([whatsappMsgId])
+}
+
+// ---------- Business configuration ----------
+
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal? @db.Decimal(10, 2)
+  durationMin Int? // duration in minutes, for bookable services
+  isActive    Boolean  @default(true)
+  isBookable  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  appointments Appointment[]
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  keywords  String[] @default([]) // used for rule-based keyword matching
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------- Appointments ----------
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+model Appointment {
+  id         String            @id @default(cuid())
+  customerId String
+  customer   Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  serviceId  String?
+  service    Service?          @relation(fields: [serviceId], references: [id])
+  scheduledAt DateTime
+  durationMin Int              @default(30)
+  status     AppointmentStatus @default(PENDING)
+  notes      String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+// ---------- Rule-based automation ----------
+
+model AutomationRule {
+  id          String   @id @default(cuid())
+  name        String
+  triggerType String // "KEYWORD" | "GREETING" | "FALLBACK"
+  keywords    String[] @default([])
+  responseText String  @db.Text
+  isActive    Boolean  @default(true)
+  priority    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ---------- Admin / settings ----------
+
+model BusinessSettings {
+  id                String   @id @default("singleton")
+  businessName      String   @default("My Business")
+  businessHours     Json?    // e.g. { mon: ["09:00","18:00"], ... }
+  welcomeMessage    String?  @db.Text
+  aiEnabled         Boolean  @default(false)
+  aiSystemPrompt    String?  @db.Text
+  handoffKeywords   String[] @default(["agent", "human", "help"])
+  updatedAt         DateTime @updatedAt
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+}
