@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getCurrentAdminEmail } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,10 +30,8 @@ const FEATURES = [
 ];
 
 export default async function LandingPage() {
-  // Already logged in — skip the marketing page and go straight to work.
-  const email = await getCurrentAdminEmail();
-  if (email) redirect("/dashboard");
-
+  // Always shown first, even if the browser already has a valid session cookie —
+  // the platform should open on the landing page every time, not skip straight to /dashboard.
   const settings = await prisma.businessSettings.findUnique({ where: { id: "singleton" } });
   const businessName = settings?.businessName || "Your Business";
 
@@ -62,7 +58,7 @@ export default async function LandingPage() {
         </p>
         <div className="mt-8">
           <Link href="/login">
-            <Button size="lg">Go to dashboard</Button>
+            <Button size="lg">Log in</Button>
           </Link>
         </div>
       </section>
