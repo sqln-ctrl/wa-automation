@@ -22,7 +22,7 @@ export default async function SettingsPage() {
       <SettingsForm settings={settings} />
       <ChangePasswordForm />
       <StaffManager
-        staff={staff.map((s) => ({ ...s, createdAt: s.createdAt.toISOString() }))}
+        staff={staff.map((s: any) => ({ ...s, createdAt: s.createdAt.toISOString() }))}
         currentEmail={currentEmail}
       />
     </div>

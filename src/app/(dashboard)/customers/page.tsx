@@ -22,12 +22,12 @@ export default async function CustomersPage() {
               </tr>
             </thead>
             <tbody>
-              {customers.map((c) => (
+              {customers.map((c: any) => (
                 <tr key={c.id} className="border-b last:border-0">
                   <td className="px-4 py-3 font-medium">{c.name || c.profileName || "—"}</td>
                   <td className="px-4 py-3 text-muted-foreground">{c.waId}</td>
                   <td className="px-4 py-3 space-x-1">
-                    {c.tags.map((t) => (
+                    {c.tags.map((t: string) => (
                       <Badge key={t} variant="secondary">{t}</Badge>
                     ))}
                     {c.isBlocked && <Badge variant="destructive">Blocked</Badge>}

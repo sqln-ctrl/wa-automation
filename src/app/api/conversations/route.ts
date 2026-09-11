@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listConversations } from "@/services/conversation.service";
-import { ConversationStatus } from "@prisma/client";
+import { ConversationStatus } from "@/lib/db-enums";
 
 export async function GET(req: NextRequest) {
   const statusParam = req.nextUrl.searchParams.get("status");

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { updateAppointmentStatus } from "@/services/appointment.service";
-import { AppointmentStatus } from "@prisma/client";
+import { AppointmentStatus } from "@/lib/db-enums";
 
 const updateSchema = z.object({ status: z.nativeEnum(AppointmentStatus) });
 

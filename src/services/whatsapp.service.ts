@@ -1,7 +1,7 @@
 // Higher-level WhatsApp operations that combine lib/whatsapp.ts calls with persistence.
 import { prisma } from "@/lib/prisma";
 import { sendTextMessage } from "@/lib/whatsapp";
-import { MessageDirection, MessageType } from "@prisma/client";
+import { MessageDirection, MessageType } from "@/lib/db-enums";
 
 /** Sends a manual (human-agent) message from the dashboard and logs it. */
 export async function sendManualReply(conversationId: string, waId: string, text: string) {

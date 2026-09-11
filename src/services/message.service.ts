@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { MessageDirection, MessageStatus, MessageType } from "@prisma/client";
+import { MessageDirection, MessageStatus, MessageType } from "@/lib/db-enums";
 import type { WhatsAppInboundMessage } from "@/types/whatsapp";
 
 /** Maps a WhatsApp Cloud API inbound message onto our internal MessageType enum. */

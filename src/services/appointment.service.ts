@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { AppointmentStatus } from "@prisma/client";
+import { AppointmentStatus } from "@/lib/db-enums";
 import { addMinutes, isBefore } from "date-fns";
 
 const BOOKING_KEYWORDS = ["book", "appointment", "schedule", "reserve", "booking"];
@@ -31,7 +31,7 @@ export async function handleAppointmentFlow({
     return "We don't currently support online booking for any services — a team member will help you shortly.";
   }
 
-  const list = bookableServices.map((s) => `- ${s.name}${s.durationMin ? ` (${s.durationMin} min)` : ""}`).join("\n");
+  const list = bookableServices.map((s: any) => `- ${s.name}${s.durationMin ? ` (${s.durationMin} min)` : ""}`).join("\n");
   return `I'd be happy to help you book an appointment! Here's what we offer:\n\n${list}\n\nReply with the service name and your preferred date/time, and our team will confirm it.`;
 }
 
@@ -60,7 +60,7 @@ export async function isSlotAvailable(scheduledAt: Date, durationMin = 30): Prom
   const overlapping = await prisma.appointment.findMany({
     where: { status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] } },
   });
-  return !overlapping.some((appt) => {
+  return !overlapping.some((appt: any) => {
     const apptEnd = addMinutes(appt.scheduledAt, appt.durationMin);
     return isBefore(appt.scheduledAt, end) && isBefore(scheduledAt, apptEnd);
   });

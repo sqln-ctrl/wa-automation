@@ -27,7 +27,7 @@ export default async function ConversationsPage() {
               </tr>
             </thead>
             <tbody>
-              {conversations.map((c) => (
+              {conversations.map((c: any) => (
                 <tr key={c.id} className="border-b last:border-0 hover:bg-accent/40">
                   <td className="px-4 py-3">
                     <Link href={`/conversations/${c.id}`} className="font-medium hover:underline">

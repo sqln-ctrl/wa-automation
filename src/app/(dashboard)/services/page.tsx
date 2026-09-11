@@ -9,7 +9,7 @@ export default async function ServicesPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">Services</h1>
-      <ServiceManager services={services.map((s) => ({ ...s, price: s.price?.toString() ?? null }))} />
+      <ServiceManager services={services.map((s: any) => ({ ...s, price: s.price?.toString() ?? null }))} />
     </div>
   );
 }

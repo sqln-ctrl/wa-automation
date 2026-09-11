@@ -33,7 +33,7 @@ export default async function AppointmentsPage() {
               </tr>
             </thead>
             <tbody>
-              {appointments.map((a) => (
+              {appointments.map((a: any) => (
                 <tr key={a.id} className="border-b last:border-0">
                   <td className="px-4 py-3 font-medium">{a.customer.name || a.customer.profileName || a.customer.waId}</td>
                   <td className="px-4 py-3 text-muted-foreground">{a.service?.name ?? "—"}</td>

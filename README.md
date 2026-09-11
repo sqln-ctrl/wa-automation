@@ -1,13 +1,13 @@
 # WhatsApp Business Automation System
 
-A production-quality MVP for automating WhatsApp customer communication for a **single local business**. Built with Next.js (App Router), TypeScript, PostgreSQL/Prisma, and the WhatsApp Cloud API.
+A production-quality MVP for automating WhatsApp customer communication for a **single local business**. Built with Next.js (App Router), TypeScript, SQLite/Prisma, and the WhatsApp Cloud API.
 
 This is intentionally **not** a SaaS/multi-tenant app — one business, one deployment — but the code is structured (services/lib separation, no hardcoded business data) so it can be adapted for another client later.
 
 ## Stack
 
 - Next.js 14 (App Router) + TypeScript
-- PostgreSQL + Prisma ORM
+- Local SQLite file + Prisma ORM
 - Tailwind CSS + shadcn/ui-style components
 - WhatsApp Cloud API
 - Optional OpenAI-compatible AI fallback
@@ -18,7 +18,7 @@ This is intentionally **not** a SaaS/multi-tenant app — one business, one depl
 ```bash
 npm install
 cp .env.example .env      # fill in your values (see below)
-npx prisma migrate dev --name init
+npx prisma migrate deploy
 npm run db:seed           # creates a default admin user + sample FAQs/services
 npm run dev
 ```
@@ -39,9 +39,9 @@ From `/settings`, the logged-in admin can:
 
 ## Environment variables
 
-See `.env.example`. Key ones:
+See `.env.example`. Key ones. `DATABASE_URL` defaults to the local SQLite file `file:./dev.db`:
 
-- `DATABASE_URL` — your Postgres connection string
+- `DATABASE_URL` — local SQLite URL (`file:./dev.db` by default)
 - `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` — from your Meta App / WhatsApp Business Platform setup
 - `AI_ENABLED` + `AI_PROVIDER_API_KEY` — optional; leave `AI_ENABLED=false` to run purely rule-based
 
@@ -66,7 +66,7 @@ src/
   types/                  # WhatsApp Cloud API payload types
 prisma/
   schema.prisma
-  seed.ts
+  seed.mjs
 ```
 
 ## Training the bot (FAQs, Services, Automation Rules)

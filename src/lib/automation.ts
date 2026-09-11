@@ -5,7 +5,7 @@ import { matchRuleBasedResponse, shouldHandoff } from "@/lib/chatbot";
 import { generateAiReply, buildSystemPrompt, isAiEnabled } from "@/lib/ai";
 import { sendTextMessage } from "@/lib/whatsapp";
 import { detectAppointmentIntent, handleAppointmentFlow } from "@/services/appointment.service";
-import { ConversationStatus, MessageDirection, MessageType } from "@prisma/client";
+import { ConversationStatus, MessageDirection, MessageType } from "@/lib/db-enums";
 
 interface ProcessArgs {
   conversationId: string;
@@ -70,14 +70,14 @@ export async function processIncomingMessage({ conversationId, customerId, waId,
 
     const systemPrompt = buildSystemPrompt({
       businessName: settings.businessName,
-      services: services.map((s) => ({ name: s.name, description: s.description, price: s.price?.toString() })),
+      services: services.map((s: any) => ({ name: s.name, description: s.description, price: s.price?.toString() })),
       faqs,
       customPrompt: settings.aiSystemPrompt,
     });
 
     const history = recentMessages
       .reverse()
-      .map((m) => ({
+      .map((m: any) => ({
         role: (m.direction === MessageDirection.INBOUND ? "user" : "assistant") as "user" | "assistant",
         content: m.content,
       }));

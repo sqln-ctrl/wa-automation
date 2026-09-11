@@ -1,7 +1,27 @@
 // Rule-based chatbot engine: matches inbound text against FAQs and AutomationRules
 // before (optionally) falling back to the AI engine.
 import { prisma } from "@/lib/prisma";
-import type { Faq, AutomationRule } from "@prisma/client";
+export interface Faq {
+  id: string;
+  question: string;
+  answer: string;
+  keywords: string[];
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AutomationRule {
+  id: string;
+  name: string;
+  triggerType: string;
+  keywords: string[];
+  responseText: string;
+  isActive: boolean;
+  priority: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export interface ChatbotMatch {
   type: "FAQ" | "RULE" | "GREETING" | "HANDOFF" | "NONE";
@@ -46,7 +66,7 @@ export async function matchRuleBasedResponse(text: string): Promise<ChatbotMatch
   }
 
   const faqs = await prisma.faq.findMany({ where: { isActive: true } });
-  const matchedFaq = faqs.find((f) => containsKeyword(normalized, f.keywords.length ? f.keywords : [f.question]));
+  const matchedFaq = faqs.find((f: Faq) => containsKeyword(normalized, f.keywords.length ? f.keywords : [f.question]));
   if (matchedFaq) {
     return { type: "FAQ", responseText: matchedFaq.answer, matched: matchedFaq };
   }
@@ -55,7 +75,7 @@ export async function matchRuleBasedResponse(text: string): Promise<ChatbotMatch
     where: { isActive: true, triggerType: "KEYWORD" },
     orderBy: { priority: "desc" },
   });
-  const matchedRule = rules.find((r) => containsKeyword(normalized, r.keywords));
+  const matchedRule = rules.find((r: AutomationRule) => containsKeyword(normalized, r.keywords));
   if (matchedRule) {
     return { type: "RULE", responseText: matchedRule.responseText, matched: matchedRule };
   }

@@ -4,9 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 // ---------- Core entities ----------
@@ -18,7 +17,9 @@ model Customer {
   profileName String? // Name reported by WhatsApp profile
   email       String?
   notes       String?
-  tags        String[] @default([])
+  // SQLite stores collection/object values as JSON text. The application
+  // transparently serializes these fields in src/lib/prisma.ts.
+  tags        String   @default("[]")
   isBlocked   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -29,17 +30,11 @@ model Customer {
   @@index([waId])
 }
 
-enum ConversationStatus {
-  BOT
-  HUMAN
-  CLOSED
-}
-
 model Conversation {
   id         String             @id @default(cuid())
   customerId String
   customer   Customer           @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  status     ConversationStatus @default(BOT)
+  status     String             @default("BOT")
   lastMessageAt DateTime        @default(now())
   createdAt  DateTime           @default(now())
   updatedAt  DateTime           @updatedAt
@@ -50,43 +45,16 @@ model Conversation {
   @@index([status])
 }
 
-enum MessageDirection {
-  INBOUND
-  OUTBOUND
-}
-
-enum MessageStatus {
-  SENT
-  DELIVERED
-  READ
-  FAILED
-  RECEIVED
-}
-
-enum MessageType {
-  TEXT
-  IMAGE
-  DOCUMENT
-  AUDIO
-  VIDEO
-  LOCATION
-  INTERACTIVE_BUTTON
-  INTERACTIVE_LIST
-  TEMPLATE
-  STICKER
-  UNKNOWN
-}
-
 model Message {
   id             String            @id @default(cuid())
   conversationId String
   conversation   Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   whatsappMsgId  String?           @unique
-  direction      MessageDirection
-  type           MessageType       @default(TEXT)
-  content        String            @db.Text
-  rawPayload     Json?
-  status         MessageStatus     @default(SENT)
+  direction      String
+  type           String            @default("TEXT")
+  content        String
+  rawPayload     String?
+  status         String            @default("SENT")
   isFromBot      Boolean           @default(false)
   isFromAi       Boolean           @default(false)
   createdAt      DateTime          @default(now())
@@ -101,7 +69,7 @@ model Service {
   id          String   @id @default(cuid())
   name        String
   description String?
-  price       Decimal? @db.Decimal(10, 2)
+  price       Decimal?
   durationMin Int? // duration in minutes, for bookable services
   isActive    Boolean  @default(true)
   isBookable  Boolean  @default(false)
@@ -114,22 +82,14 @@ model Service {
 model Faq {
   id        String   @id @default(cuid())
   question  String
-  answer    String   @db.Text
-  keywords  String[] @default([]) // used for rule-based keyword matching
+  answer    String
+  keywords  String   @default("[]") // JSON-encoded string array
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 // ---------- Appointments ----------
-
-enum AppointmentStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
-  COMPLETED
-  NO_SHOW
-}
 
 model Appointment {
   id         String            @id @default(cuid())
@@ -139,7 +99,7 @@ model Appointment {
   service    Service?          @relation(fields: [serviceId], references: [id])
   scheduledAt DateTime
   durationMin Int              @default(30)
-  status     AppointmentStatus @default(PENDING)
+  status     String            @default("PENDING")
   notes      String?
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
@@ -154,8 +114,8 @@ model AutomationRule {
   id          String   @id @default(cuid())
   name        String
   triggerType String // "KEYWORD" | "GREETING" | "FALLBACK"
-  keywords    String[] @default([])
-  responseText String  @db.Text
+  keywords    String   @default("[]") // JSON-encoded string array
+  responseText String
   isActive    Boolean  @default(true)
   priority    Int      @default(0)
   createdAt   DateTime @default(now())
@@ -167,11 +127,11 @@ model AutomationRule {
 model BusinessSettings {
   id                String   @id @default("singleton")
   businessName      String   @default("My Business")
-  businessHours     Json?    // e.g. { mon: ["09:00","18:00"], ... }
-  welcomeMessage    String?  @db.Text
+  businessHours     String?  // JSON-encoded, e.g. { mon: ["09:00","18:00"], ... }
+  welcomeMessage    String?
   aiEnabled         Boolean  @default(false)
-  aiSystemPrompt    String?  @db.Text
-  handoffKeywords   String[] @default(["agent", "human", "help"])
+  aiSystemPrompt    String?
+  handoffKeywords   String   @default("[\"agent\", \"human\", \"help\"]")
   updatedAt         DateTime @updatedAt
 }
 

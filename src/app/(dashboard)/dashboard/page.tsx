@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ConversationStatus, AppointmentStatus } from "@prisma/client";
+import { ConversationStatus, AppointmentStatus } from "@/lib/db-enums";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +52,7 @@ export default async function DashboardPage() {
           {recentConversations.length === 0 && (
             <p className="text-sm text-muted-foreground">No conversations yet.</p>
           )}
-          {recentConversations.map((c) => (
+          {recentConversations.map((c: any) => (
             <div key={c.id} className="flex items-center justify-between border-b pb-2 last:border-0">
               <div>
                 <p className="text-sm font-medium">{c.customer.name || c.customer.profileName || c.customer.waId}</p>

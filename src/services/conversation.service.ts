@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { ConversationStatus } from "@prisma/client";
+import { ConversationStatus } from "@/lib/db-enums";
 
 /** Finds the active (non-closed) conversation for a customer, or creates a new one. */
 export async function findOrCreateActiveConversation(customerId: string) {

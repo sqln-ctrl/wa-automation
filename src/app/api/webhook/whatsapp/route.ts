@@ -6,7 +6,7 @@ import { findOrCreateActiveConversation } from "@/services/conversation.service"
 import { saveInboundMessage, updateMessageStatusByWaId } from "@/services/message.service";
 import { processIncomingMessage } from "@/lib/automation";
 import type { WhatsAppWebhookPayload } from "@/types/whatsapp";
-import { MessageStatus } from "@prisma/client";
+import { MessageStatus } from "@/lib/db-enums";
 
 /**
  * GET /api/webhook/whatsapp
