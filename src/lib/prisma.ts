@@ -35,6 +35,7 @@ function serializeOperationArgs(model: string | undefined, args: Record<string, 
 function deserializeJsonFields(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(deserializeJsonFields);
   if (!value || typeof value !== "object") return value;
+  if (value instanceof Date) return value;
 
   const record = value as Record<string, unknown>;
   const next: Record<string, unknown> = {};
