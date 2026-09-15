@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "WhatsApp Business Automation",
-  description: "Admin dashboard for WhatsApp customer automation",
+  title: "FlowPilot | WhatsApp Automation Workspace",
+  description: "A focused workspace for automating and managing WhatsApp customer conversations.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --background: 228 33% 98%;
+    --foreground: 229 34% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 142 71% 32%;
+    --card-foreground: 229 34% 16%;
+    --primary: 244 72% 58%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 60%;
+    --secondary: 234 45% 96%;
+    --secondary-foreground: 236 37% 26%;
+    --muted: 228 28% 96%;
+    --muted-foreground: 225 14% 47%;
+    --accent: 244 75% 96%;
+    --accent-foreground: 244 60% 42%;
+    --destructive: 0 74% 57%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 142 71% 32%;
-    --radius: 0.5rem;
+    --border: 225 29% 90%;
+    --input: 225 25% 86%;
+    --ring: 244 72% 58%;
+    --radius: 0.875rem;
   }
 }
 
@@ -29,7 +29,58 @@
   * {
     @apply border-border;
   }
+
+  html {
+    @apply antialiased;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply min-h-screen bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at 8% -15%, hsl(var(--primary) / 0.1), transparent 28rem),
+      radial-gradient(circle at 100% 5%, rgba(103, 104, 225, 0.08), transparent 24rem);
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
+}
+
+@layer components {
+  .page-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.16em] text-primary;
+  }
+
+  .page-title {
+    @apply mt-1 text-3xl font-semibold tracking-[-0.035em] text-foreground sm:text-4xl;
+  }
+
+  .page-description {
+    @apply mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base;
+  }
+
+  .saas-table {
+    @apply w-full text-left text-sm;
+  }
+
+  .saas-table thead {
+    @apply border-b bg-muted/55 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground;
+  }
+
+  .saas-table th {
+    @apply px-5 py-3.5;
+  }
+
+  .saas-table td {
+    @apply px-5 py-4;
+  }
+
+  .saas-table tbody tr {
+    @apply border-b border-border/70 transition-colors last:border-0 hover:bg-accent/35;
+  }
+
+  .subtle-grid {
+    background-image: linear-gradient(hsl(var(--border) / 0.45) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border) / 0.45) 1px, transparent 1px);
+    background-size: 32px 32px;
   }
 }
