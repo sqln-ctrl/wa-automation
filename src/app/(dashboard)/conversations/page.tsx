@@ -13,12 +13,12 @@ export default async function ConversationsPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Conversations</h1>
-      <Card>
+    <div className="space-y-8">
+      <div><p className="page-kicker">Shared inbox</p><h1 className="page-title">Customer conversations</h1><p className="page-description">Follow every WhatsApp thread and take over exactly when a personal reply matters.</p></div>
+      <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead className="border-b bg-muted/40 text-left text-muted-foreground">
+          <div className="overflow-x-auto"><table className="saas-table">
+            <thead>
               <tr>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Last Message</th>
@@ -28,7 +28,7 @@ export default async function ConversationsPage() {
             </thead>
             <tbody>
               {conversations.map((c: any) => (
-                <tr key={c.id} className="border-b last:border-0 hover:bg-accent/40">
+                <tr key={c.id}>
                   <td className="px-4 py-3">
                     <Link href={`/conversations/${c.id}`} className="font-medium hover:underline">
                       {c.customer.name || c.customer.profileName || c.customer.waId}
@@ -45,13 +45,13 @@ export default async function ConversationsPage() {
               ))}
               {conversations.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">
+                  <td colSpan={4} className="py-10 text-center text-muted-foreground">
                     No conversations yet.
                   </td>
                 </tr>
               )}
             </tbody>
-          </table>
+          </table></div>
         </CardContent>
       </Card>
     </div>

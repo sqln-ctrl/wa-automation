@@ -8,12 +8,12 @@ export default async function CustomersPage() {
   const customers = await prisma.customer.findMany({ orderBy: { createdAt: "desc" } });
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Customers</h1>
-      <Card>
+    <div className="space-y-8">
+      <div><p className="page-kicker">Customer directory</p><h1 className="page-title">Know who&apos;s on the other side.</h1><p className="page-description">A clean view of the people engaging with your WhatsApp automation.</p></div>
+      <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead className="border-b bg-muted/40 text-left text-muted-foreground">
+          <div className="overflow-x-auto"><table className="saas-table">
+            <thead>
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">WhatsApp Number</th>
@@ -23,7 +23,7 @@ export default async function CustomersPage() {
             </thead>
             <tbody>
               {customers.map((c: any) => (
-                <tr key={c.id} className="border-b last:border-0">
+                <tr key={c.id}>
                   <td className="px-4 py-3 font-medium">{c.name || c.profileName || "—"}</td>
                   <td className="px-4 py-3 text-muted-foreground">{c.waId}</td>
                   <td className="px-4 py-3 space-x-1">
@@ -36,10 +36,10 @@ export default async function CustomersPage() {
                 </tr>
               ))}
               {customers.length === 0 && (
-                <tr><td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">No customers yet.</td></tr>
+                <tr><td colSpan={4} className="py-10 text-center text-muted-foreground">No customers yet.</td></tr>
               )}
             </tbody>
-          </table>
+          </table></div>
         </CardContent>
       </Card>
     </div>

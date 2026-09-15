@@ -19,12 +19,12 @@ export default async function AppointmentsPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Appointments</h1>
-      <Card>
+    <div className="space-y-8">
+      <div><p className="page-kicker">Booking queue</p><h1 className="page-title">Appointments in motion.</h1><p className="page-description">Keep an eye on upcoming customer requests from one organized schedule.</p></div>
+      <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead className="border-b bg-muted/40 text-left text-muted-foreground">
+          <div className="overflow-x-auto"><table className="saas-table">
+            <thead>
               <tr>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Service</th>
@@ -34,7 +34,7 @@ export default async function AppointmentsPage() {
             </thead>
             <tbody>
               {appointments.map((a: any) => (
-                <tr key={a.id} className="border-b last:border-0">
+                <tr key={a.id}>
                   <td className="px-4 py-3 font-medium">{a.customer.name || a.customer.profileName || a.customer.waId}</td>
                   <td className="px-4 py-3 text-muted-foreground">{a.service?.name ?? "—"}</td>
                   <td className="px-4 py-3 text-muted-foreground">{a.scheduledAt.toLocaleString()}</td>
@@ -44,10 +44,10 @@ export default async function AppointmentsPage() {
                 </tr>
               ))}
               {appointments.length === 0 && (
-                <tr><td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">No appointments yet.</td></tr>
+                <tr><td colSpan={4} className="py-10 text-center text-muted-foreground">No appointments yet.</td></tr>
               )}
             </tbody>
-          </table>
+          </table></div>
         </CardContent>
       </Card>
     </div>

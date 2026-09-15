@@ -117,7 +117,7 @@ export default function RulesManager({ rules }: { rules: Rule[] }) {
                   id="ruleType"
                   value={form.triggerType}
                   onChange={(e) => setForm({ ...form, triggerType: e.target.value as TriggerType })}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+                  className="flex h-11 w-full rounded-xl border border-input bg-card/80 px-3.5 py-2 text-sm shadow-sm transition-all focus:border-primary/50 focus:outline-none focus:ring-4 focus:ring-primary/10"
                 >
                   <option value="KEYWORD">Keyword</option>
                   <option value="GREETING">Greeting</option>

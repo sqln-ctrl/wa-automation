@@ -7,10 +7,11 @@ export default async function AutomationPage() {
   const rules = await prisma.automationRule.findMany({ orderBy: [{ priority: "desc" }, { createdAt: "desc" }] });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold">Automation Rules</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="page-kicker">Automation studio</p>
+        <h1 className="page-title">Design your customer flow.</h1>
+        <p className="page-description">
           Keyword-triggered responses and the fallback message the bot uses when nothing else matches.
           FAQs and Services are managed on their own pages, and the welcome message + handoff keywords are in Settings.
         </p>
