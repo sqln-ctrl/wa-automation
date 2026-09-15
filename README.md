@@ -1,13 +1,13 @@
 # WhatsApp Business Automation System
 
-A production-quality MVP for automating WhatsApp customer communication for a **single local business**. Built with Next.js (App Router), TypeScript, SQLite/Prisma, and the WhatsApp Cloud API.
+A production-quality MVP for automating WhatsApp customer communication for a **single local business**. Built with Next.js (App Router), TypeScript, Neon Postgres/Prisma, and the WhatsApp Cloud API.
 
 This is intentionally **not** a SaaS/multi-tenant app — one business, one deployment — but the code is structured (services/lib separation, no hardcoded business data) so it can be adapted for another client later.
 
 ## Stack
 
 - Next.js 14 (App Router) + TypeScript
-- Local SQLite file + Prisma ORM
+- Neon serverless PostgreSQL + Prisma ORM
 - Tailwind CSS + shadcn/ui-style components
 - WhatsApp Cloud API
 - Optional OpenAI-compatible AI fallback
@@ -18,7 +18,7 @@ This is intentionally **not** a SaaS/multi-tenant app — one business, one depl
 ```bash
 npm install
 cp .env.example .env      # fill in your values (see below)
-npx prisma migrate deploy
+npm run prisma:migrate
 npm run db:seed           # creates a default admin user + sample FAQs/services
 npm run dev
 ```
@@ -39,9 +39,9 @@ From `/settings`, the logged-in admin can:
 
 ## Environment variables
 
-See `.env.example`. Key ones. `DATABASE_URL` defaults to the local SQLite file `file:./dev.db`:
+See `.env.example`. Before running the app, create a Neon project and copy its **pooled** connection string from **Neon Dashboard → Connect** into `DATABASE_URL`. This project uses Prisma 5.18, which Neon supports with one pooled URL for runtime queries and Prisma migrations; do not add `pgbouncer=true`. Keep the SSL parameters Neon supplies.
 
-- `DATABASE_URL` — local SQLite URL (`file:./dev.db` by default)
+- `DATABASE_URL` — Neon pooled PostgreSQL URL, for example `postgresql://<role>:<password>@<endpoint>-pooler.<region>.aws.neon.tech/<database>?sslmode=require&channel_binding=require`
 - `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` — from your Meta App / WhatsApp Business Platform setup
 - `AI_ENABLED` + `AI_PROVIDER_API_KEY` — optional; leave `AI_ENABLED=false` to run purely rule-based
 
@@ -84,3 +84,9 @@ Everything that shapes the bot's automated responses is editable from the dashbo
 - Add rate limiting / retries around outbound WhatsApp API calls.
 - The appointment flow is intentionally minimal — wire `sendListMessage` (in `lib/whatsapp.ts`) to a stateful "pending booking" flow for a fully automated booking experience.
 - Add a UI for managing `AutomationRule` records (structure mirrors the FAQ page).
+
+## Migrating from the previous local SQLite setup
+
+The PostgreSQL migration history starts with a new Neon-compatible baseline. It is intended for an empty Neon database; the existing local `prisma/dev.db` is left untouched as a backup. After adding your Neon `DATABASE_URL`, apply the schema with `npm run prisma:migrate` and optionally seed it with `npm run db:seed`.
+
+If the local SQLite database contains production records that must be retained, export and import that data before switching traffic. Do not run the new baseline against a Neon database that already has these tables or Prisma migration history.

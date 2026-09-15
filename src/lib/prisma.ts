@@ -69,10 +69,7 @@ const client =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = client;
 
-/**
- * SQLite has no JSON or array column types. This keeps the original model
- * shapes while storing those values as JSON text in the local database.
- */
+/** Keeps the API's collection/object fields stable while storing them as JSON text. */
 export const prisma: any = client.$extends({
   query: {
     $allModels: {

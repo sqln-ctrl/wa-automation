@@ -1,5 +1,5 @@
-// SQLite has no native enum type. Keep the same application-level values and
-// validate them at the API boundary while storing them as text in the local DB.
+// Keep the application-level values validated at the API boundary and stored
+// in the schema's portable text columns.
 export const ConversationStatus = {
   BOT: "BOT",
   HUMAN: "HUMAN",
