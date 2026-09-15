@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,8 +17,8 @@ model Customer {
   profileName String? // Name reported by WhatsApp profile
   email       String?
   notes       String?
-  // SQLite stores collection/object values as JSON text. The application
-  // transparently serializes these fields in src/lib/prisma.ts.
+  // Stored as JSON text to preserve the application API. Serialization is
+  // handled transparently in src/lib/prisma.ts.
   tags        String   @default("[]")
   isBlocked   Boolean  @default(false)
   createdAt   DateTime @default(now())
